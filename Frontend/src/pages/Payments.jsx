@@ -4,7 +4,7 @@ import { LoadMore, TopBar } from "../components/CustomComponents";
 import { getPaymentRecordsHelper } from "../services/payment.services";
 import { limit } from "../utils/constants";
 import Loader from "../components/Loader";
-import { formateDateTime } from "../utils/helper";
+import { formateDateTime } from "../utils/Helper";
 
 const Payments = () => {
   const [paymentRecords, setPaymentRecords] = useState([]);
