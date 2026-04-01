@@ -1,0 +1,21 @@
+{
+  "name": "mediodriver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "local": "concurrently \"npm run dev --prefix Backend\" \"npm run dev --prefix Frontend\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MalikMoon699/MedioDriver.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/MalikMoon699/MedioDriver/issues"
+  },
+  "homepage": "https://github.com/MalikMoon699/MedioDriver#readme"
+}
