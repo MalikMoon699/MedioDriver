@@ -126,12 +126,12 @@ export const uploadMultipleMedia = async (req, res) => {
               uploadBy: req.user.id,
             });
 
-         uploadedFiles.push({
-           ...newMedia.toObject(),
-           fileId: newMedia._id,
-           fileUrl: `${Backend_Url}/api/media/get-media/${newMedia._id}`,
-           uploadedAt: newMedia.createdAt,
-         });
+            uploadedFiles.push({
+              ...newMedia.toObject(),
+              fileId: newMedia._id,
+              fileUrl: `${Backend_Url}/api/media/get-media/${newMedia._id}`,
+              uploadedAt: newMedia.createdAt,
+            });
 
             resolve();
           });
@@ -197,7 +197,7 @@ export const getMediaById = async (req, res) => {
     const bucket = getBucket();
 
     res.set("Content-Type", media.contentType);
-
+    res.set("Content-Disposition", "inline");
     const downloadStream = bucket.openDownloadStream(media.gridfsId);
 
     downloadStream.pipe(res);

@@ -5,7 +5,6 @@ import { handleVerifyHelper } from "../services/payment.services";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "sonner";
 import { TopBar } from "./CustomComponents";
-import "../assets/style/Payment.css";
 
 const PaymentSuccess = () => {
   const navigate = useNavigate();
@@ -49,9 +48,9 @@ const PaymentSuccess = () => {
               <div style={{ marginTop: "-3px" }}>
                 <button
                   className="landing-page-btn landing-page-btn-secondary landing-page-cta-btn"
-                  onClick={() => navigate("/upload-media")}
+                  onClick={() => navigate("/payments")}
                 >
-                  Go to uploads
+                  Go to payments
                   <ArrowRight size={18} />
                 </button>
               </div>

@@ -28,6 +28,13 @@ export const SideBarMenu = [
     activeAt: "/media-records",
   },
   {
+    name: "Payments",
+    icon: "BadgePoundSterling",
+    route: "/payments",
+    activeAt: "/payments",
+    startsWith: ["/payment-success"],
+  },
+  {
     name: "API Section",
     icon: "Key",
     route: "/api-section",

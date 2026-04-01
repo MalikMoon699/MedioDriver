@@ -12,6 +12,7 @@ import MediaRecords from "./pages/MediaRecords.jsx";
 import APISection from "./pages/APISection.jsx";
 import Settings from "./pages/Settings.jsx";
 import PaymentSuccess from "./components/PaymentSuccess.jsx";
+import Payments from "./pages/Payments.jsx";
 
 const App = () => {
   return (
@@ -56,6 +57,14 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <PaymentSuccess />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/payments"
+            element={
+              <ProtectedRoute>
+                <Payments />
               </ProtectedRoute>
             }
           />

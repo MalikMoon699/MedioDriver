@@ -9,6 +9,7 @@ import {
   Upload,
   X,
   FileText,
+  Video,
 } from "lucide-react";
 import {
   getTodayUploads,
