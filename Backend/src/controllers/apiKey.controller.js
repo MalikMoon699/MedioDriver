@@ -34,7 +34,7 @@ export const genApiKey = async (req, res) => {
     res.status(201).json({
       message: "API key created successfully",
       apiKey: {
-        id: apiKey._id,
+        _id: apiKey._id,
         name: apiKey.name,
         key: apiKey.key,
         createdAt: apiKey.createdAt,
@@ -48,7 +48,9 @@ export const genApiKey = async (req, res) => {
 
 export const getApiKeys = async (req, res) => {
   try {
-    const keys = await ApiKey.find({ createdBy: req.user.id });
+    const keys = await ApiKey.find({ createdBy: req.user.id }).sort({
+      createdAt: -1,
+    });
     res.status(200).json({ keys });
   } catch (error) {
     res.status(500).json({ message: error.message });

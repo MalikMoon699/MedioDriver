@@ -19,35 +19,35 @@ const APISection = () => {
   const [monthUsage, setMonthUsage] = useState(0);
   const [apiKeys, setApiKeys] = useState([]);
   const [loading, setLoading] = useState(true);
-   const codeRef = useRef();
+  const codeRef = useRef();
 
-   useEffect(() => {
-     fetchAllData();
-   }, []);
+  useEffect(() => {
+    fetchAllData();
+  }, []);
 
-   const fetchAllData = async () => {
-     const today = new Date().toISOString().split("T")[0];
-     const month = new Date().toISOString().slice(0, 7);
+  const fetchAllData = async () => {
+    const today = new Date().toISOString().split("T")[0];
+    const month = new Date().toISOString().slice(0, 7);
 
-     try {
-       setLoading(true);
+    try {
+      setLoading(true);
 
-       const [keysRes, todayRes, monthRes] = await Promise.all([
-         getApiKeys(),
-         getApiUsageByDate(today),
-         getApiUsageByMonth(month),
-       ]);
+      const [keysRes, todayRes, monthRes] = await Promise.all([
+        getApiKeys(),
+        getApiUsageByDate(today),
+        getApiUsageByMonth(month),
+      ]);
 
-       setApiKeys(keysRes?.keys || []);
-       setTodayUsage(todayRes?.totalCalls || 0);
-       setMonthUsage(monthRes?.totalCalls || 0);
-     } catch (err) {
-       console.error("Failed to load API data:", err);
-     } finally {
-       setLoading(false);
-     }
-   };
-   
+      setApiKeys(keysRes?.keys || []);
+      setTodayUsage(todayRes?.totalCalls || 0);
+      setMonthUsage(monthRes?.totalCalls || 0);
+    } catch (err) {
+      console.error("Failed to load API data:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <TopBar title="API Section" />
@@ -88,6 +88,7 @@ const APISection = () => {
                 lastUsed={key?.lastUsed}
                 calls={key?.keyCalles}
                 apiKey={key?.key}
+                setApiKeys={setApiKeys}
               />
             ))
           ) : (
@@ -143,7 +144,12 @@ export const uploadByApi = async (files) => {
 `}
           </pre>
         </div>
-        {isGen && <GenerateApiKey onClose={() => setIsGen(false)} />}
+        {isGen && (
+          <GenerateApiKey
+            onClose={() => setIsGen(false)}
+            setApiKeys={setApiKeys}
+          />
+        )}
       </div>
     </>
   );
@@ -172,7 +178,15 @@ const StateTabs = ({
   );
 };
 
-const ApiKeyCard = ({ title, created, lastUsed, calls, apiKey, keyId }) => {
+const ApiKeyCard = ({
+  title,
+  created,
+  lastUsed,
+  calls,
+  apiKey,
+  keyId,
+  setApiKeys,
+}) => {
   const [isShow, setIsShow] = useState(false);
 
   const handleCopy = () => {
@@ -184,6 +198,7 @@ const ApiKeyCard = ({ title, created, lastUsed, calls, apiKey, keyId }) => {
     if (window.confirm("Are you sure you want to delete this API key?")) {
       try {
         await deleteApiKeys(keyId);
+        setApiKeys((prev) => prev.filter((key) => key._id !== keyId));
         toast.success("Key deleted successfully.");
       } catch (err) {
         console.error("Failed to delete Key:", err);
@@ -202,8 +217,10 @@ const ApiKeyCard = ({ title, created, lastUsed, calls, apiKey, keyId }) => {
         <div>
           <h4>{title || "N/A"}</h4>
           <p>
-            Created {formateDate(created) || "N/A"} • Last used{" "}
-            {timeAgo(lastUsed) || "N/A"}
+            Created {formateDate(created) || "N/A"}{" "}
+            {lastUsed &&
+              `• Last used
+            ${timeAgo(lastUsed) || "N/A"}`}
           </p>
         </div>
         <span className="api-key-badge">{calls || 0} calls</span>
@@ -227,7 +244,7 @@ const ApiKeyCard = ({ title, created, lastUsed, calls, apiKey, keyId }) => {
   );
 };
 
-const GenerateApiKey = ({ onClose }) => {
+const GenerateApiKey = ({ onClose, setApiKeys }) => {
   const [keyName, setKeyName] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -235,7 +252,8 @@ const GenerateApiKey = ({ onClose }) => {
     if (keyName.trim() === "") return toast.error("Key Name is required!");
     try {
       setLoading(true);
-      await genApiKey(keyName);
+      const res = await genApiKey(keyName);
+      setApiKeys((prev) => [res?.apiKey,...prev]);
       toast.success("Api key gen successfuly.");
     } catch (err) {
       console.error("Failed to gen api key:", err);
