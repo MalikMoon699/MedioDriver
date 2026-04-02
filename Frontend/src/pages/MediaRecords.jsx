@@ -11,7 +11,7 @@ import {
   Video,
   FileText,
 } from "lucide-react";
-import { LoadMore, SearchInput, TopBar } from "../components/CustomComponents";
+import { LoadMore, SearchInput, StorageSearch, TopBar } from "../components/CustomComponents";
 import { deleteMedia, getMediaRecords } from "../services/upload.services";
 import Loader from "../components/Loader";
 import { formateDate, formatFileSize, handleDownload } from "../utils/Helper";
@@ -105,7 +105,7 @@ const MediaRecords = () => {
       <TopBar title="Media Records" />
       <div className="page-container">
         <div className="media-record-topbar">
-          <SearchInput value={search} setValue={setSearch} width="310px" />
+          <StorageSearch setValue={setSearch} width="310px"  storage="mediaRecordSearchHistory"/>
           <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
             <div className="media-record-filters">
               {filters.map((f, i) => (

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "../assets/style/CustomComponents.css";
 import {
   CirclePoundSterling,
@@ -188,7 +188,8 @@ export const TopBar = ({ title = "", updateCredits = null }) => {
   const [isCreadit, setIsCreadit] = useState(false);
   const [isAddMore, setIsAddMore] = useState(false);
 
-  const creadit = updateCredits !== null ? updateCredits : currentUser?.credits || 0;
+  const creadit =
+    updateCredits !== null ? updateCredits : currentUser?.credits || 0;
 
   const colorSuggestion = () => {
     if (creadit < 10) {
@@ -292,6 +293,158 @@ export const SearchInput = ({
         placeholder={placeholder}
         className="customs-search-input"
       />
+    </div>
+  );
+};
+
+export const StorageSearch = ({
+  disabled = false,
+  setValue,
+  placeholder = "Search...",
+  margin = "",
+  width = "",
+  storage = "searchHistory",
+}) => {
+  const [search, setSearch] = useState("");
+  const [history, setHistory] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const boxRef = useRef();
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (boxRef.current && !boxRef.current.contains(e.target)) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem(storage)) || [];
+    setHistory(stored);
+  }, [storage]);
+
+  const handleSearch = () => {
+    if (!search.trim()) return;
+    setValue(search);
+    let updatedHistory = [search, ...history.filter((item) => item !== search)];
+    localStorage.setItem(storage, JSON.stringify(updatedHistory));
+    setHistory(updatedHistory);
+    setShowSuggestions(false);
+  };
+
+  const handleClearSearch = () => {
+    setSearch("");
+    setValue("");
+    setShowSuggestions(false);
+  };
+
+  const filteredHistory = history?.filter((item) =>
+    item.toLowerCase().includes(search.toLowerCase()),
+  );
+
+  const handleRemoveItem = (itemToRemove) => {
+    const updated = history.filter((item) => item !== itemToRemove);
+
+    setHistory(updated);
+    localStorage.setItem(storage, JSON.stringify(updated));
+  };
+
+  const handleClearstorage = () => {
+    console.log("hit");
+
+    setHistory([]);
+    localStorage.removeItem(storage);
+  };
+
+  return (
+    <div className="customs-search-box" ref={boxRef} style={{ margin, width }}>
+      <Search className="customs-search-icon" />
+      <input
+        disabled={disabled}
+        value={search}
+        onChange={(e) => {
+          const value = e.target.value;
+          if (!value.trim()) {
+            handleClearSearch();
+          } else {
+            setSearch(value);
+            setShowSuggestions(true);
+          }
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            handleSearch();
+          }
+        }}
+        onFocus={() => setShowSuggestions(true)}
+        placeholder={placeholder}
+        className="customs-search-input"
+      />
+      {search.trim() && (
+        <X
+          className="customs-search-icon icon custom-suggestion-item-remove-btn"
+          size={15}
+          onClick={handleClearSearch}
+        />
+      )}
+      {showSuggestions && (
+        <div className="custom-search-suggestions">
+          {filteredHistory.length > 0 ? (
+            <>
+              <div className="custom-suggestion-items-container">
+                {filteredHistory.map((item, index) => (
+                  <div
+                    key={index}
+                    className="custom-suggestion-item"
+                    onClick={() => {
+                      setSearch(item);
+                      setValue(item);
+                      setShowSuggestions(false);
+                    }}
+                  >
+                    <p className="elepsis">{item}</p>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveItem(item);
+                      }}
+                      className="icon custom-suggestion-item-remove-btn"
+                    >
+                      <X size={15} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              <div
+                className="custom-suggestion-item"
+                style={{
+                  justifyContent: "center",
+                  borderTop: "1px solid var(--border)",
+                  padding: "10px 3px",
+                }}
+                onClick={handleClearstorage}
+              >
+                Clear All
+              </div>
+            </>
+          ) : (
+            <div
+              className="custom-suggestion-item"
+              style={{
+                justifyContent: "center",
+                padding: "15px 6px",
+                cursor: "default",
+              }}
+            >
+              No history found.
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
