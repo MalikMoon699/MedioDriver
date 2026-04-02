@@ -358,7 +358,7 @@
 .custom-suggestion-items-container {
   display: flex;
   flex-direction: column;
-  overflow: auto hidden;
+  overflow: hidden auto;
   max-height: 150px;
 }
 
